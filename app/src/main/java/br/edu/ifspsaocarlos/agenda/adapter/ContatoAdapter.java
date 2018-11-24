@@ -1,10 +1,12 @@
 package br.edu.ifspsaocarlos.agenda.adapter;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import br.edu.ifspsaocarlos.agenda.model.Contato;
@@ -22,9 +24,8 @@ public class ContatoAdapter extends RecyclerView.Adapter<ContatoAdapter.ContatoV
     private static ItemClickListener clickListener;
 
 
-
     public ContatoAdapter(List<Contato> contatos, Context context) {
-        this.contatos = contatos;
+        ContatoAdapter.contatos = contatos;
         this.context = context;
     }
 
@@ -37,7 +38,10 @@ public class ContatoAdapter extends RecyclerView.Adapter<ContatoAdapter.ContatoV
 
     @Override
     public void onBindViewHolder(ContatoViewHolder holder, int position) {
-       holder.nome.setText(contatos.get(position).getNome());
+        Contato c = contatos.get(position);
+        holder.nome.setText(c.getNome());
+        holder.favorito.setImageDrawable(ContextCompat.getDrawable(context,
+                c.getFavorito() != null && c.getFavorito() == 1 ? android.R.drawable.btn_star_big_on : android.R.drawable.btn_star_big_off));
     }
 
     @Override
@@ -51,26 +55,28 @@ public class ContatoAdapter extends RecyclerView.Adapter<ContatoAdapter.ContatoV
     }
 
 
-    public  class ContatoViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public class ContatoViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         final TextView nome;
+        final ImageButton favorito;
 
         ContatoViewHolder(View view) {
             super(view);
-            nome = (TextView)view.findViewById(R.id.nome);
+            nome = view.findViewById(R.id.nome);
+            favorito = view.findViewById(R.id.favorite);
             view.setOnClickListener(this);
+            favorito.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View view) {
-
             if (clickListener != null)
-                clickListener.onItemClick(getAdapterPosition());
+                clickListener.onItemClick(getAdapterPosition(), view);
         }
     }
 
 
     public interface ItemClickListener {
-        void onItemClick(int position);
+        void onItemClick(int position, View view);
     }
 
 }

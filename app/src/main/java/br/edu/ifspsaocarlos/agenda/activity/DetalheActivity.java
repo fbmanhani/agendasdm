@@ -23,22 +23,25 @@ public class DetalheActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detalhe);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        if (getIntent().hasExtra("contato"))
-        {
+        if (getIntent().hasExtra("contato")) {
             this.c = (Contato) getIntent().getSerializableExtra("contato");
-            EditText nameText = (EditText)findViewById(R.id.editTextNome);
+            EditText nameText = findViewById(R.id.editTextNome);
             nameText.setText(c.getNome());
-            EditText foneText = (EditText)findViewById(R.id.editTextFone);
+            EditText foneText = findViewById(R.id.editTextFone);
             foneText.setText(c.getFone());
-            EditText emailText = (EditText)findViewById(R.id.editTextEmail);
+            EditText celText = findViewById(R.id.editTextCelular);
+            celText.setText(c.getCelular());
+            EditText emailText = findViewById(R.id.editTextEmail);
             emailText.setText(c.getEmail());
-            int pos =c.getNome().indexOf(" ");
-            if (pos==-1)
-                pos=c.getNome().length();
-            setTitle(c.getNome().substring(0,pos));
+            EditText dataText = findViewById(R.id.editTextData);
+            dataText.setText(c.getDataNascimento());
+            int pos = c.getNome().indexOf(" ");
+            if (pos == -1)
+                pos = c.getNome().length();
+            setTitle(c.getNome().substring(0, pos));
         }
         cDAO = new ContatoDAO(this);
     }
@@ -47,8 +50,7 @@ public class DetalheActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_detalhe, menu);
-        if (!getIntent().hasExtra("contato"))
-        {
+        if (!getIntent().hasExtra("contato")) {
             MenuItem item = menu.findItem(R.id.delContato);
             item.setVisible(false);
         }
@@ -69,34 +71,35 @@ public class DetalheActivity extends AppCompatActivity {
         }
     }
 
-    private void apagar()
-    {
+    private void apagar() {
         cDAO.apagaContato(c);
-
         Intent resultIntent = new Intent();
-        setResult(3,resultIntent);
+        setResult(3, resultIntent);
         finish();
     }
 
-    private void salvar()
-    {
+    private void salvar() {
         String name = ((EditText) findViewById(R.id.editTextNome)).getText().toString();
         String fone = ((EditText) findViewById(R.id.editTextFone)).getText().toString();
         String email = ((EditText) findViewById(R.id.editTextEmail)).getText().toString();
+        String cel = ((EditText) findViewById(R.id.editTextCelular)).getText().toString();
+        String data = ((EditText) findViewById(R.id.editTextData)).getText().toString();
 
-        if (c==null)
+        if (c == null)
             c = new Contato();
 
 
         c.setNome(name);
         c.setFone(fone);
         c.setEmail(email);
+        c.setCelular(cel);
+        c.setDataNascimento(data);
 
         cDAO.salvaContato(c);
         //c.setId(10);
         //ContatoAdapter.Adiciona(c);
         Intent resultIntent = new Intent();
-        setResult(RESULT_OK,resultIntent);
+        setResult(RESULT_OK, resultIntent);
         finish();
     }
 }
